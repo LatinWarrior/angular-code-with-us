@@ -1,0 +1,9 @@
+h1 {
+    color: purple;
+    font-size: 1.5rem;
+}
+
+.selected {
+    color: purple;
+    font-weight: bold;
+}
