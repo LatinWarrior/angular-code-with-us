@@ -1,0 +1,17 @@
+<h1>{{customer.name}}</h1>
+<p>{{customer.name}} is in the {{customer.address.region}} region</p>
+<p>{{customer.address.street}}</p>
+<p>{{customer.address.city}}</p>
+<p>{{customer.address.state}}</p>
+
+<fieldset>
+    <label>Name: <input [(ngModel)]="customer.name" /></label><br>
+</fieldset>
+
+<div>
+    <label><input type="checkbox" [(ngModel)]="showAddress" /> Show Address</label>
+</div>
+
+<div *ngIf="showAddress">
+    <address-detail [address]="customer.address"></address-detail>
+</div>
