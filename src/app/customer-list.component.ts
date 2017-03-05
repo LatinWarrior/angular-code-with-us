@@ -15,6 +15,7 @@ export class CustomerListComponent implements OnInit {
   customers: Customer[];
 
   customer: Customer;
+  isBusy: boolean = false;
 
   constructor(private dataService: DataService,
     private loggerService: LoggerService) {
@@ -23,8 +24,18 @@ export class CustomerListComponent implements OnInit {
 
   // Lifecycle goes here.
   ngOnInit() {
+    this.getCustomers();
+  }
+
+  getCustomers() {
+    this.isBusy = true;
     this.loggerService.log('Getting customers...');
-    this.customers = this.dataService.getCustomers();
+    // this.customers = this.dataService.getCustomers();
+    // this.dataService.getCustomersP().then(custs => {
+      this.dataService.getCustomers().subscribe(custs => {
+      this.isBusy = false;
+      this.customers = custs;
+    });
   }
 
   shift(increment: number) {

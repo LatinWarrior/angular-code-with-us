@@ -3,7 +3,10 @@
 <div>
 
     <!--list is here-->
-    <p>
+    <p *ngIf="isBusy">
+        <i>Loading customers...</i>
+    </p>
+    <p *ngIf="!isBusy">
         <i>Select a Customer</i>
     </p>
     <ul>
