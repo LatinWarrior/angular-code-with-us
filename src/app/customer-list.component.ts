@@ -35,6 +35,9 @@ export class CustomerListComponent implements OnInit {
       this.dataService.getCustomers().subscribe(custs => {
       this.isBusy = false;
       this.customers = custs;
+    }, (errorMsg: string) => {
+      this.isBusy = false;
+      // TODO: Fix this so that we don't get a catastrophic error. Use a toast or something like that.
     });
   }
 

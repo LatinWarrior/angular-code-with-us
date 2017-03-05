@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
 
 import { Customer } from './model';
 import { createTestCustomers } from './test-data';
@@ -19,6 +23,10 @@ export class DataService {
     * @param {Http} http - The injected Http.
     * @constructor
     */
+
+    private customersUrl = 'api/customers';
+    private statesUrl = 'api/states';
+
     constructor(private http: Http, private loggerService: LoggerService) {
 
     }
@@ -35,27 +43,53 @@ export class DataService {
 
     getCustomersP(): Promise<Customer[]> {
 
-        this.loggerService.log('returned customers as a Promise...');
+        this.loggerService.log('Getting customers as a Promise via Http...');
 
-        const customers = createTestCustomers();
-
-        return new Promise<Customer[]>(resolve => {
-            setTimeout(() => {
-                this.loggerService.log(`returned ${customers.length} customers`);
-                resolve(customers);
-            }, 1500)
-        });
+        return this
+            .http
+            .get(this.customersUrl)
+            .toPromise()
+            .then(response => {
+                const custs = response.json().data as Customer[];
+                this.loggerService.log(`Got ${custs.length} customers`);
+                return custs;
+            }, error => {
+                this.loggerService.log(`Error occurred: ${error}`);
+                return Promise.reject('Something bad happened in getting customers. Please check the console.');
+            });        
     }
 
     getCustomers(): Observable<Customer[]> {
-        this.loggerService.log('returned customers as an Observable...');
 
-        const customers = createTestCustomers();
+        this.loggerService.log('Getting customers as an Observable via Http...');
 
-        return of(customers)
-            .delay(1500)
-            .do(() => {
-                this.loggerService.log(`returned ${customers.length} customers`);
+        return this
+            .http
+            .get(this.customersUrl)
+            .map(response => response.json().data as Customer[])
+            .do((custs) => {
+                this.loggerService.log(`Got ${custs.length} customers`);
+            })
+            .catch((error: any) => {
+                this.loggerService.log(`Error occurred: ${error}`);
+                return Observable.throw('Something bad happened in getting customers. Please check the console.');
+            });
+    }
+
+    getStates(): Observable<Array<string>> {
+
+        this.loggerService.log('Getting states as an Observable via Http...');
+
+        return this
+            .http
+            .get(this.statesUrl)
+            .map(resp => resp.json().data as Array<string>)
+            .do((states) => {
+                this.loggerService.log(`Got ${states.length} states`);
+            })
+            .catch((error: any) => {
+                this.loggerService.log(`Error occurred: ${error}`);
+                return Observable.throw('Something bad happened in getting states. Please check the console.');
             });
     }
 
