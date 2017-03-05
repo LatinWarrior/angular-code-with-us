@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { Customer } from './model';
 import { createTestCustomers } from './test-data';
+import { LoggerService } from './logger.service';
 
 /**
 * This class provides the Data service with methods to read names and add names.
@@ -15,7 +16,7 @@ export class DataService {
     * @param {Http} http - The injected Http.
     * @constructor
     */
-    constructor(private http: Http) {
+    constructor(private http: Http, private loggerService: LoggerService) {
 
     }
     /**
@@ -30,7 +31,9 @@ export class DataService {
     // }
 
     getCustomers() {
-        return createTestCustomers();
+        const customers = createTestCustomers();
+        this.loggerService.log(`returned ${customers.length} customers`);
+        return customers;
     }
 
     /**
